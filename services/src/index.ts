@@ -1,5 +1,5 @@
 import "dotenv/config";
-import express, {NextFunction, Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import { createServer } from 'http';
 
 import { db, todos } from "./db";
@@ -42,9 +42,22 @@ app.get(
 );
 
 
-app.get("/api/v1/todos/:id", (req: Request, res: Response) => {
-  res.send("GET TODO BY ID");
-});
+app.get(
+  "/api/v1/todos/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await db
+        .select()
+        .from(todos)
+        .where(eq(todos.id, req.params.id))
+        .limit(1);
+      req.log.info({ result }, "Todos fetched successfully");
+      res.status(result.length === 1 ? 200 : 404).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 app.post("/api/v1/todos", (req: Request, res: Response) => {
   res.send("POST CREATE TODO");
