@@ -35,3 +35,12 @@ resource "aws_vpc_endpoint" "ecr_dkr_endpoint" {
   security_group_ids  = [aws_security_group.vpce.id]
   subnet_ids          = var.private_subnet_ids
 }
+
+resource "aws_vpc_endpoint" "ecr_api_endpoint" {
+  vpc_id              = var.vpc_id
+  private_dns_enabled = true
+  service_name        = "com.amazonaws.${var.aws_region}.ecr.api"
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [aws_security_group.vpce.id]
+  subnet_ids          = var.private_subnet_ids
+}
