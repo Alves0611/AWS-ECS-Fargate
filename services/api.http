@@ -1,38 +1,46 @@
-@host = http://localhost:8081
+@host = http://localhost:3000
 
-@baseUrl = {{host}}/api/v1 
-
-@contentType = application/json 
+@baseUrl = {{host}}/api/v1
+@contentType = application/json
 
 ###
 GET {{host}}
-content-Type: {{contentType}}
+Content-Type: {{contentType}}
 
 ###
 GET {{host}}/healthcheck
-content-Type: {{contentType}}
+Content-Type: {{contentType}}
 
-### 
+###
+# @name createTodo
 POST {{baseUrl}}/todos
-content-Type: {{contentType}}
+Content-Type: {{contentType}}
 
 {
-  "task": "task to do", 
-  "description": "aqui vai uma descricao"
+    "task": "Ir ao mercado",
+    "description": "Comprar leite, arroz, feijão"
 }
 
-### 
-GET {{baseUrl}}/todos
-content-Type: {{contentType}}
+###
+# @name todos
+GET {{baseUrl}}/todos?limit=10
+Content-Type: {{contentType}}
 
-### 
-GET {{baseUrl}}/todos/123
-content-Type: {{contentType}}
+###
+GET {{baseUrl}}/todos/9fedc6f4-86c1-4315-b4aa-270716f29a7d
+Content-Type: {{contentType}}
 
-### 
-PATCH {{baseUrl}}/todos/123
-content-Type: {{contentType}}
+###
+# @name updateTodo
+PATCH {{baseUrl}}/todos/3dabd3be-568f-4d9b-b634-7bdf2e08ca90
+Content-Type: {{contentType}}
 
-### 
-DELETE {{baseUrl}}/todos/123
-content-Type: {{contentType}}
+{
+    "isDone": "true",
+    "doneAt": "2024-08-11T13:12:33.123Z"
+}
+
+###
+# @name deleteTodo
+DELETE {{baseUrl}}/todos/3dabd3be-568f-4d9b-b634-7bdf2e08ca90
+Content-Type: {{contentType}}
