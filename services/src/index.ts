@@ -59,9 +59,26 @@ app.get(
   }
 );
 
-app.post("/api/v1/todos", (req: Request, res: Response) => {
-  res.send("POST CREATE TODO");
-});
+app.post(
+  "/api/v1/todos",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const todo = await db
+        .insert(todos)
+        .values({
+          id: randomUUID(),
+          task: req.body.task,
+          description: req.body.description,
+          ...(req.body.dueDate && { dueDate: new Date(req.body.dueDate) }),
+        })
+        .returning();
+      req.log.info({ todo }, "Todo created successfully");
+      res.status(201).json(todo);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 app.patch("/api/v1/todos/:id", (req: Request, res: Response) => {
   res.send("UPDATE TODO BY ID");
