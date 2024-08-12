@@ -101,9 +101,18 @@ app.patch(
   }
 );
 
-app.delete("/api/v1/todos/:id", (req: Request, res: Response) => {
-  res.send("DELETE TODO BY ID");
-});
+app.delete(
+  "/api/v1/todos/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await db.delete(todos).where(eq(todos.id, req.params.id));
+      req.log.info({ result }, "Todo deleted successfully");
+      res.status(result.rowCount === 1 ? 200 : 404).json();
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 app.use((err: any, req: Request, res: Response, next: any) => {
   errorHandler.handleError(err, res);
