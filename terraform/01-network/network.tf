@@ -85,3 +85,17 @@ resource "aws_route_table" "private" {
     "Name" = "${local.namespaced_department_name}-private-${local.selected_availability_zones[count.index]}"
   }
 }
+
+resource "aws_route_table_association" "public" {
+  count = var.network.az_count
+
+  route_table_id = aws_route_table.public.*.id[count.index]
+  subnet_id      = aws_subnet.public.*.id[count.index]
+}
+
+resource "aws_route_table_association" "private" {
+  count = var.network.az_count
+
+  route_table_id = aws_route_table.private.*.id[count.index]
+  subnet_id      = aws_subnet.private.*.id[count.index]
+}
