@@ -49,3 +49,21 @@ variable "network" {
     error_message = "The number of availability zones must be between 1 and 3."
   }
 }
+
+variable "use_nat_gateway" {
+  description = "Whether to use NAT Gateway to connect the private subnet(s) to the internet or not. Conflicts with use_nat_instance. Setting both to true is not allowed. Choose one based on the cost and performance needs of your environment"
+  type        = bool
+  default     = false
+}
+
+variable "use_nat_instance" {
+  description = "Whether to use NAT Instances to connect the private subnet(s) to the internet or not. Conflicts with use_nat_gateway. Setting both to true is not allowed. Choose one based on the cost and performance needs of your environment"
+  type        = bool
+  default     = false
+}
+
+variable "create_vpc_endpoint" {
+  description = "Controls the creation of VPC Endpoints for services like S3, Docker, and Cloudwatch. Requires network.enable_dns_support and network.enable_dns_hostnames to be true. Ensuring these prerequisites can enable private access to AWS services without requiring Internet Gateway"
+  type        = bool
+  default     = false
+}
