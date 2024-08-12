@@ -1,5 +1,8 @@
+import "dotenv/config";
 import express, { Request, Response } from 'express';
 import { createServer } from 'http';
+
+import { db, todos } from "./db";
 
 const app = express();
 
@@ -15,9 +18,16 @@ app.get("/healthcheck", (req: Request, res: Response) => {
   }
 });
 
-app.get("/api/v1/todos", (req: Request, res: Response) => {
-  res.send("GET TODOS");
+app.get("/api/v1/todos", async (req: Request, res: Response) => {
+  try {
+    const result = await db.select().from(todos);
+    res.json(result);
+  } catch (error) {
+    console.error(error)
+    res.status(500).send();
+  }
 });
+
 
 app.get("/api/v1/todos/:id", (req: Request, res: Response) => {
   res.send("GET TODO BY ID");
@@ -37,7 +47,7 @@ app.delete("/api/v1/todos/:id", (req: Request, res: Response) => {
 
 const server = createServer(app);
 
-const port = 8080;
-server.listen(8080, () => {
+const port = process.env.PORT ?? 8081;
+server.listen(port, () => {
   console.log(`Server is running on port ${port}`)
 })
