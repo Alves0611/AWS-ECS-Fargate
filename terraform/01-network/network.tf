@@ -38,3 +38,50 @@ resource "aws_subnet" "public" {
     "Name" = "${local.namespaced_department_name}-public-${local.selected_availability_zones[count.index]}"
   }
 }
+
+resource "aws_route" "internet_access" {
+  destination_cidr_block = "0.0.0.0/0"
+  route_table_id         = aws_vpc.this.main_route_table_id
+  gateway_id             = aws_internet_gateway.this.id
+}
+
+resource "aws_route_table" "public" {
+  count = var.network.az_count
+
+  vpc_id = aws_vpc.this.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.this.id
+  }
+
+  tags = {
+    "Name" = "${local.namespaced_department_name}-public-${local.selected_availability_zones[count.index]}"
+  }
+}
+
+resource "aws_route_table" "private" {
+  count = var.network.az_count
+
+  vpc_id = aws_vpc.this.id
+
+  dynamic "route" {
+    for_each = local.use_nat_gateway ? [1] : []
+    content {
+      cidr_block     = "0.0.0.0/0"
+      nat_gateway_id = module.nat_gateway[0].id[count.index]
+    }
+  }
+
+  dynamic "route" {
+    for_each = local.use_nat_instance ? [1] : []
+    content {
+      cidr_block           = "0.0.0.0/0"
+      network_interface_id = module.nat_instance[0].network_interface[count.index]
+    }
+  }
+
+  tags = {
+    "Name" = "${local.namespaced_department_name}-private-${local.selected_availability_zones[count.index]}"
+  }
+}
