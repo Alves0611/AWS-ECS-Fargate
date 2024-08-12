@@ -1,5 +1,5 @@
 import "dotenv/config";
-import express, { Request, Response } from 'express';
+import express, {NextFunction, Request, Response } from 'express';
 import { createServer } from 'http';
 
 import { db, todos } from "./db";
@@ -19,15 +19,27 @@ app.get("/healthcheck", (req: Request, res: Response) => {
   }
 });
 
-app.get("/api/v1/todos", async (req: Request, res: Response) => {
-  try {
-    const result = await db.select().from(todos);
-    res.json(result);
-  } catch (error) {
-    console.error(error)
-    res.status(500).send();
+app.get(
+  "/api/v1/todos",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const limit = Number(req.query.limit) || 10;
+      const results = await db
+        .select({
+          id: todos.id,
+          task: todos.task,
+          description: todos.description,
+          isDone: todos.isDone,
+        })
+        .from(todos)
+        .limit(limit >= 1 && limit <= 50 ? limit : 10);
+      req.log.info({ results }, "Todos fetched successfully");
+      res.json(results);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 
 app.get("/api/v1/todos/:id", (req: Request, res: Response) => {
