@@ -80,9 +80,26 @@ app.post(
   }
 );
 
-app.patch("/api/v1/todos/:id", (req: Request, res: Response) => {
-  res.send("UPDATE TODO BY ID");
-});
+app.patch(
+  "/api/v1/todos/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const todo = await db
+        .update(todos)
+        .set({
+          isDone: req.body.isDone,
+          doneAt: new Date(req.body.doneAt),
+          updatedAt: new Date(),
+        })
+        .where(eq(todos.id, req.params.id))
+        .returning();
+      req.log.info({ todo }, "Todo updated successfully");
+      res.status(200).json(todo);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 app.delete("/api/v1/todos/:id", (req: Request, res: Response) => {
   res.send("DELETE TODO BY ID");
