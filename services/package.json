@@ -43,6 +43,8 @@
     "@types/node": "^22.2.0",
     "@types/pg": "^8.11.6",
     "drizzle-kit": "^0.24.0",
+    "pino": "^9.3.2",
+    "pino-http": "^10.2.0",
     "tsup": "^8.2.4",
     "tsx": "^4.17.0",
     "typescript": "^5.5.4"
