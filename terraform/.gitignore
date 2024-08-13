@@ -27,10 +27,6 @@ dist-ssr
 **/.terraform/*
 .terraform.lock.hcl
 
-# .tfstate files
-*.tfstate
-*.tfstate.*
-*.tfvars
 # Crash log files
 crash.log
 crash.*.log
