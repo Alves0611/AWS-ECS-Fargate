@@ -52,3 +52,16 @@ resource "aws_rds_cluster" "postgresql" {
   db_subnet_group_name   = aws_db_subnet_group.this.id
   vpc_security_group_ids = [aws_security_group.this.id]
 }
+
+resource "aws_rds_cluster_instance" "cluster_instance" {
+  count = var.az_count
+
+  identifier                      = "${local.namespaced_service_name}-${count.index}"
+  cluster_identifier              = aws_rds_cluster.postgresql.id
+  instance_class                  = var.db_machine
+  engine                          = aws_rds_cluster.postgresql.engine
+  engine_version                  = aws_rds_cluster.postgresql.engine_version
+  publicly_accessible             = var.db_public_accessible
+  performance_insights_enabled    = true
+  performance_insights_kms_key_id = aws_kms_key.this.arn
+}
