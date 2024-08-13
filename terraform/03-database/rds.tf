@@ -25,3 +25,30 @@ resource "aws_security_group" "this" {
   }
 }
 
+resource "aws_db_subnet_group" "this" {
+  name       = local.namespaced_service_name
+  subnet_ids = local.subnets.private.id
+
+  tags = {
+    Name = "${local.namespaced_service_name}-postgres"
+  }
+}
+
+resource "aws_rds_cluster" "postgresql" {
+  cluster_identifier            = "${local.namespaced_service_name}-cluster"
+  engine                        = var.db_engine.engine
+  engine_version                = var.db_engine.version
+  availability_zones            = local.availability_zones
+  database_name                 = var.db_name
+  master_username               = var.db_user
+  manage_master_user_password   = true
+  master_user_secret_kms_key_id = aws_kms_key.this.key_id
+  backup_retention_period       = var.db_backup_retention
+  skip_final_snapshot           = var.db_skip_final_snapshot
+
+  kms_key_id        = aws_kms_key.this.arn
+  storage_encrypted = true
+
+  db_subnet_group_name   = aws_db_subnet_group.this.id
+  vpc_security_group_ids = [aws_security_group.this.id]
+}
