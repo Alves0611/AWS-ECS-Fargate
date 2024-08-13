@@ -11,3 +11,12 @@ data "terraform_remote_state" "network" {
   }
 }
 
+data "terraform_remote_state" "bastion_host" {
+  backend = "s3"
+
+  config = {
+    bucket = ""
+    key    = "ecs-fargate/dev/bastion-host/terraform.tfstate"
+    region = var.aws_region
+  }
+}
