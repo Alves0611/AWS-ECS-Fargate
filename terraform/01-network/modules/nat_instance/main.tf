@@ -22,4 +22,28 @@ resource "aws_iam_policy_attachment" "this" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+resource "aws_iam_instance_profile" "this" {
+  name = local.name
+  role = aws_iam_role.this.name
+}
+
+resource "aws_security_group" "this" {
+  name        = local.name
+  description = "${var.vpc_name} NAT Instance security group"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 
