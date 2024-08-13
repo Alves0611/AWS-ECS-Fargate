@@ -1,5 +1,15 @@
 data "aws_caller_identity" "current" {}
 
+data "terraform_remote_state" "network" {
+  backend = "s3"
+
+  config = {
+    bucket = "tfstate-891377404175"
+    key    = "ecs-fargate/${var.environment}/network/terraform.tfstate"
+    region = var.aws_region
+  }
+}
+
 data "aws_ami" "ubuntu" {
   most_recent = true
 
