@@ -49,3 +49,20 @@ resource "aws_alb_listener" "http" {
   }
 }
 
+
+resource "aws_alb_listener" "https" {
+  count = local.create_resource_based_on_domain_name
+
+  load_balancer_arn = aws_alb.this.id
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = aws_acm_certificate.this[0].arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_alb_target_group.this.id
+  }
+
+  depends_on = [aws_acm_certificate_validation.this]
+}
