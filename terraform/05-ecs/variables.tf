@@ -91,3 +91,14 @@ variable "autoscaling" {
     }
   }
 }
+
+variable "domain_name" {
+  type        = string
+  description = "Optional. The apex domain name for creating a subdomain for the service. Must be a valid domain format, e.g., 'example.com'"
+  default     = null
+
+  validation {
+    condition     = var.domain_name != null ? can(regex("^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9].[a-zA-Z]{2,}$", var.domain_name)) : true
+    error_message = "Invalid domain name. It must be a valid domain name."
+  }
+}
