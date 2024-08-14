@@ -31,3 +31,21 @@ resource "aws_iam_role" "ecs_task_role" {
   name               = "${var.service_name}-task-${var.environment}"
   assume_role_policy = data.aws_iam_policy_document.ecs_task_execution_role.json
 }
+
+resource "aws_iam_policy" "ecs_task_role" {
+  name = "${var.service_name}-task-${var.environment}"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = "rds:*"
+      Resource = "arn:aws:rds:${var.aws_region}:${local.account_id}:/table/${local.db_name}"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_role" {
+  role       = aws_iam_role.ecs_task_role.name
+  policy_arn = aws_iam_policy.ecs_task_role.arn
+
+}
