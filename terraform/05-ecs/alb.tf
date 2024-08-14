@@ -22,3 +22,30 @@ resource "aws_alb_target_group" "this" {
   }
 }
 
+resource "aws_alb_listener" "http" {
+  load_balancer_arn = aws_alb.this.id
+  port              = 80
+  protocol          = "HTTP"
+
+  dynamic "default_action" {
+    for_each = local.has_domain_name ? [1] : []
+    content {
+      type = "redirect"
+
+      redirect {
+        port        = "443"
+        protocol    = "HTTPS"
+        status_code = "HTTP_301"
+      }
+    }
+  }
+
+  dynamic "default_action" {
+    for_each = local.has_domain_name ? [] : [1]
+    content {
+      type             = "forward"
+      target_group_arn = aws_alb_target_group.this.id
+    }
+  }
+}
+
