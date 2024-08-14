@@ -54,4 +54,40 @@ variable "log_retention_days" {
   default     = 5
 }
 
-
+variable "autoscaling" {
+  description = "Autoscaling parameters for the ECS service, detailing minimum and maximum task counts, along with rules for autoscaling based on CPU, memory usage, and ALB request counts"
+  type = object({
+    min_capacity = number
+    max_capacity = number
+    memory_autoscaling = object({
+      target             = number
+      scale_in_cooldown  = number
+      scale_out_cooldown = number
+    })
+    cpu_autoscaling = object({
+      target             = number
+      scale_in_cooldown  = number
+      scale_out_cooldown = number
+    })
+    alb_autoscaling = object({
+      target = number
+    })
+  })
+  default = {
+    min_capacity = 1
+    max_capacity = 10
+    memory_autoscaling = {
+      target             = 60
+      scale_in_cooldown  = 300
+      scale_out_cooldown = 300
+    }
+    cpu_autoscaling = {
+      target             = 40
+      scale_in_cooldown  = 300
+      scale_out_cooldown = 300
+    }
+    alb_autoscaling = {
+      target = 1000
+    }
+  }
+}
