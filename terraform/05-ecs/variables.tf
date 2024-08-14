@@ -42,4 +42,16 @@ variable "ecs" {
   }
 }
 
+variable "log_level" {
+  description = "Defines the logging level for the application, affecting the verbosity of logs, e.g., 'info', 'debug'"
+  type        = string
+  default     = "info"
+}
+
+variable "log_retention_days" {
+  description = "Specifies the duration in days that logs are retained in CloudWatch before being deleted, e.g., '5' days"
+  type        = number
+  default     = 5
+}
+
 
