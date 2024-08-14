@@ -6,3 +6,10 @@ provider "aws" {
   }
 }
 
+resource "random_id" "version" {
+  keepers = {
+    service_hash = local.service_file_hash
+  }
+
+  byte_length = 8
+}
