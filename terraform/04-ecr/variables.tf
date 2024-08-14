@@ -22,4 +22,14 @@ variable "department_name" {
   default     = "devops"
 }
 
+variable "app_folder" {
+  description = "Local filesystem path to the application's source code. This might be used for context in scripts or documentation. Default is '../../services/api'"
+  type        = string
+  default     = "../../services/api"
+}
 
+variable "force_delete_repo" {
+  description = "Flag to determine whether the ECR repository should be forcefully deleted even if it contains images. Set to 'true' to enable force deletion"
+  type        = bool
+  default     = true
+}
