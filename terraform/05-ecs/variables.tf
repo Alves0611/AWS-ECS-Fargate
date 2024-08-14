@@ -22,3 +22,24 @@ variable "department_name" {
   default     = "devops"
 }
 
+variable "ecs" {
+  description = "Configuration object for the ECS service, including CPU/memory allocations, app container port, desired count of tasks, Docker image URL, and health check path"
+  type = object({
+    fargate_cpu       = number
+    fargate_memory    = number
+    app_port          = number
+    app_count         = number
+    app_image         = string
+    health_check_path = string
+  })
+  default = {
+    fargate_cpu       = 256
+    fargate_memory    = 512
+    app_port          = 3000
+    app_count         = 1
+    app_image         = ""
+    health_check_path = "/healthcheck"
+  }
+}
+
+
