@@ -25,7 +25,7 @@ variable "department_name" {
 variable "app_folder" {
   description = "Local filesystem path to the application's source code. This might be used for context in scripts or documentation. Default is '../../services/api'"
   type        = string
-  default     = "../../services/api"
+  default     = "../../services"
 }
 
 variable "force_delete_repo" {
